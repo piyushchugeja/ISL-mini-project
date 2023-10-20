@@ -8,8 +8,8 @@ url = "wss://backend.buildpicoapps.com/api/chatbot/chat"
 
 websocket.enableTrace(False) 
 ws = websocket.WebSocketApp(url)
-systemPrompt = "You will be given a set of words, use those words to build a meaningful sentence. Return only the sentence and nothing more.";
-message = 'Generate a grammatically correct sentence using the following words: '
+systemPrompt = "You will be given a set of words, generate a grammatically correct sentence using those exact words. Return only the sentence and nothing more.";
+message = ''
 
 def on_open(ws):
     payload = {
@@ -27,11 +27,11 @@ def on_message(ws, message):
     sentence += message
 
 def run_request(words, language):
-    global message
-    message += ', '.join(words) + '. Use language: ' + language + '.'
-    print(message)
+    global sentence, message
+    sentence = ''
+    message = 'Words: '+ ', '.join(words) + '. Use language: ' + language + '.'
     ws.on_open = on_open
     ws.on_message = on_message
     ws.run_forever()
-    print(sentence)
     ws.close()
+    return sentence

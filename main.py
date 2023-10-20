@@ -3,8 +3,7 @@ import numpy as np
 import mediapipe as mp
 from tensorflow.keras.models import load_model
 from test import run_request
-import os 
-import threading
+import os
 
 # suppress warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
@@ -21,6 +20,7 @@ f.close()
 
 cap = cv2.VideoCapture(0)
 predicted_words = []
+processing = False
 
 while True:
     _, frame = cap.read()
@@ -29,7 +29,7 @@ while True:
     framergb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
     result = hands.process(framergb)
     className = ''
-    if result.multi_hand_landmarks:
+    if result.multi_hand_landmarks and not processing:
         landmarks = []
         for handslms in result.multi_hand_landmarks:
             for lm in handslms.landmark:
@@ -45,9 +45,12 @@ while True:
                 predicted_words.append(className)
     else:
         if predicted_words != []:
-            print(predicted_words)
-            thread = threading.Thread(target=run_request, args=(predicted_words, 'English'))
-            thread.start()
+            print("\nList of words:", predicted_words)
+            # processing = True
+            # thread = threading.Thread(target=run_request, args=(predicted_words, 'English'))
+            # thread.start()
+            sentence = run_request(predicted_words, 'Hindi')
+            print("Sentence:", sentence)
             predicted_words = []
     cv2.putText(frame, className, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.imshow("Output", frame) 

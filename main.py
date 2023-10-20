@@ -38,9 +38,9 @@ while True:
             if predicted_words == [] or predicted_words[-1] != className:
                 predicted_words.append(className)
     else:
-        if len(predicted_words > 0):
+        if predicted_words != []:
             print(predicted_words)
-            predicted_words = []        
+            predicted_words = []
     cv2.putText(frame, className, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.imshow("Output", frame) 
     if cv2.waitKey(1) == ord('q'):

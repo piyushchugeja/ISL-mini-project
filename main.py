@@ -1,12 +1,33 @@
 import cv2
 import numpy as np
 import mediapipe as mp
-from tensorflow.keras.models import load_model
-from test import run_request
+from sentences import run_request
 import os
+from gtts import gTTS
+import playsound
+import logging
+logging.disable(logging.WARNING)
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+from tensorflow.keras.models import load_model
 
-# suppress warnings
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
+languages = {
+    1: ['English', 'en'],
+    2: ['Hindi', 'hi'],
+    3: ['Marathi', 'mr'],
+}
+
+print()
+for i in languages:
+    print(i, "-", languages[i][0])
+lang_i = int(input("\nSelect your language: "))
+language = languages[lang_i][0]
+lang = languages[lang_i][1]
+
+def speak(sentence):
+    response = gTTS(text=sentence, lang=lang)
+    response.save("response.mp3")
+    playsound.playsound("response.mp3", True)
+    os.remove("response.mp3")
 
 mpHands = mp.solutions.hands
 hands = mpHands.Hands(max_num_hands=1, min_detection_confidence=0.7)
@@ -46,12 +67,10 @@ while True:
     else:
         if predicted_words != []:
             print("\nList of words:", predicted_words)
-            # processing = True
-            # thread = threading.Thread(target=run_request, args=(predicted_words, 'English'))
-            # thread.start()
-            sentence = run_request(predicted_words, 'Hindi')
+            sentence = run_request(predicted_words, language)
             print("Sentence:", sentence)
             predicted_words = []
+            speak(sentence)
     cv2.putText(frame, className, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.imshow("Output", frame) 
     if cv2.waitKey(1) == ord('q'):

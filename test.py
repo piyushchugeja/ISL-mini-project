@@ -10,10 +10,6 @@ websocket.enableTrace(False)
 ws = websocket.WebSocketApp(url)
 systemPrompt = "You will be given a set of words, use those words to build a meaningful sentence. Return only the sentence and nothing more.";
 message = 'Generate a grammatically correct sentence using the following words: '
-words = ['peace', 'smile']
-language = 'English'
-message += ', '.join(words) + '. Use language: ' + language + '.'
-print(message)
 
 def on_open(ws):
     payload = {
@@ -30,8 +26,12 @@ def on_message(ws, message):
     global sentence
     sentence += message
 
-ws.on_open = on_open
-ws.on_message = on_message
-ws.run_forever()
-print(sentence)
-ws.close()
+def run_request(words, language):
+    global message
+    message += ', '.join(words) + '. Use language: ' + language + '.'
+    print(message)
+    ws.on_open = on_open
+    ws.on_message = on_message
+    ws.run_forever()
+    print(sentence)
+    ws.close()

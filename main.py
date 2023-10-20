@@ -2,6 +2,12 @@ import cv2
 import numpy as np
 import mediapipe as mp
 from tensorflow.keras.models import load_model
+from test import run_request
+import os 
+import threading
+
+# suppress warnings
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '5'
 
 mpHands = mp.solutions.hands
 hands = mpHands.Hands(max_num_hands=1, min_detection_confidence=0.7)
@@ -40,6 +46,8 @@ while True:
     else:
         if predicted_words != []:
             print(predicted_words)
+            thread = threading.Thread(target=run_request, args=(predicted_words, 'English'))
+            thread.start()
             predicted_words = []
     cv2.putText(frame, className, (10, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
     cv2.imshow("Output", frame) 

@@ -65,7 +65,7 @@ while True:
             if predicted_words == [] or predicted_words[-1] != className:
                 predicted_words.append(className)
     else:
-        if predicted_words != []:
+        if predicted_words != [] or len(predicted_words > 1):
             print("\nList of words:", predicted_words)
             sentence = run_request(predicted_words, language)
             print("Sentence:", sentence)

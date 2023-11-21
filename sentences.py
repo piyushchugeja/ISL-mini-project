@@ -29,7 +29,7 @@ def on_message(ws, message):
 def run_request(words, language):
     global sentence, message
     sentence = ''
-    message = 'Words: '+ ', '.join(words) + '. Use language: ' + language + '.'
+    message = 'Words: '+ ', '.join(words) + '. \nUse language: ' + language + '.'
     ws.on_open = on_open
     ws.on_message = on_message
     ws.run_forever()

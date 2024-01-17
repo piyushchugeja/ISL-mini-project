@@ -1,7 +1,12 @@
-from gtts import gTTS
-import playsound, os
-text = 'Hello, this is from India'
-response = gTTS(text=text, lang="en", tld="co.in")
-response.save("response.mp3")
-playsound.playsound("response.mp3", True)
-os.remove("response.mp3")
+import google.generativeai as genai
+import os
+genai.configure(api_key=os.environ['GOOGLE_API_KEY'])
+model = genai.GenerativeModel("gemini-pro")
+
+def get_sentence(words, language):
+    prompt = "You are being given a set of words, generate a grammatically correct and meaningful sentence using those words. Do not add context to the sentence. Return only the sentence and nothing more. \nWords: " + ', '.join(words) + ". \nUse language: " + language + "."
+    response = model.generate_content(
+        prompt,
+    )
+    print(response.text)
+    return response.text

@@ -1,33 +1,38 @@
 import cv2
 import numpy as np
 import mediapipe as mp
-from sentences import run_request
+# from sentences import run_request
 import os
 from gtts import gTTS
 import playsound
 import logging
+from requests import get
 logging.disable(logging.WARNING)
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 from tensorflow.keras.models import load_model
+import google.generativeai as genai
+from test import get_sentence
 
 languages = {
     1: ['English', 'en'],
     2: ['Hindi', 'hi'],
-    3: ['Marathi', 'mr'],
 }
 
 print()
 for i in languages:
     print(i, "-", languages[i][0])
 lang_i = int(input("\nSelect your language: "))
-language = languages[lang_i][0]
-lang = languages[lang_i][1]
+lang = languages[lang_i][0]
+language = languages[lang_i][1]
 
 def speak(sentence):
-    response = gTTS(text=sentence, lang=lang)
-    response.save("response.mp3")
-    playsound.playsound("response.mp3", True)
-    os.remove("response.mp3")
+    try:
+        response = gTTS(text=sentence, lang=language)
+        response.save("response.mp3")
+        playsound.playsound("response.mp3", True)
+        os.remove("response.mp3")
+    except:
+        print("Error while speaking, please try again later.")
 
 mpHands = mp.solutions.hands
 hands = mpHands.Hands(max_num_hands=1, min_detection_confidence=0.7)
@@ -65,9 +70,10 @@ while True:
             if predicted_words == [] or predicted_words[-1] != className:
                 predicted_words.append(className)
     else:
-        if predicted_words != [] or len(predicted_words > 1):
+        if predicted_words != [] or len(predicted_words) > 1:
             print("\nList of words:", predicted_words)
-            sentence = run_request(predicted_words, language)
+            # sentence = run_request(predicted_words, language)
+            sentence = get_sentence(predicted_words, lang)
             print("Sentence:", sentence)
             predicted_words = []
             speak(sentence)

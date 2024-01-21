@@ -1,17 +1,11 @@
 import cv2
 import numpy as np
 import mediapipe as mp
-# from sentences import run_request
 import os
 from gtts import gTTS
 import playsound
-import logging
-from requests import get
-logging.disable(logging.WARNING)
-os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 from tensorflow.keras.models import load_model
-import google.generativeai as genai
-from test import get_sentence
+from gemini import get_sentence
 
 languages = {
     1: ['English', 'en'],
@@ -28,6 +22,8 @@ language = languages[lang_i][1]
 def speak(sentence):
     try:
         response = gTTS(text=sentence, lang=language)
+        if (os.path.exists("response.mp3")):
+            os.remove("response.mp3")
         response.save("response.mp3")
         playsound.playsound("response.mp3", True)
         os.remove("response.mp3")

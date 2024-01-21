@@ -8,5 +8,4 @@ def get_sentence(words, language):
     response = model.generate_content(
         prompt,
     )
-    print(response.text)
     return response.text
